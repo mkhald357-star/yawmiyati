@@ -1,0 +1,8 @@
+[{
+  "relation": ["delegate_permission/common.handle_all_urls"],
+  "target": {
+    "namespace": "android_app",
+    "package_name": "io.github.mkhald357.yawmiyati",
+    "sha256_cert_fingerprints": ["ضع_هنا_بصمة_مفتاح_التوقيع"]
+  }
+}]
