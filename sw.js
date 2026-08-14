@@ -1,4 +1,4 @@
-/* يومياتي — Service Worker: عمل بلا إنترنت + تنبيهات مجدولة */
+/* مدبر المهام — Service Worker: عمل بلا إنترنت + تنبيهات مجدولة */
 const CACHE='yawmiyati-v1';
 const ASSETS=['./','./index.html','./manifest.json','./icon-192.png','./icon-512.png'];
 
@@ -37,7 +37,7 @@ self.addEventListener('message',async e=>{
   try{
    await self.registration.showNotification('⏰ '+(a.label||'منبه'),{
     tag:'alarm-'+a.id+'-'+a.at,
-    body:'افتح «يومياتي» وحلّ التحدي لإيقافه',
+    body:'افتح «مدبر المهام» وحلّ التحدي لإيقافه',
     icon:'./icon-192.png',badge:'./icon-192.png',
     requireInteraction:true,
     silent:false,

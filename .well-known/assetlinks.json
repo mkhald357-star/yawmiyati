@@ -2,7 +2,7 @@
   "relation": ["delegate_permission/common.handle_all_urls"],
   "target": {
     "namespace": "android_app",
-    "package_name": "io.github.mkhald357.yawmiyati",
-    "sha256_cert_fingerprints": ["ضع_هنا_بصمة_مفتاح_التوقيع"]
+    "package_name": "io.github.mkhald357_star.yawmiyati",
+    "sha256_cert_fingerprints": ["29:7E:88:C3:DC:4E:BE:ED:73:1F:64:2B:5F:2B:D7:20:A4:54:46:74:5E:0B:7E:86:BD:70:19:1F:76:0B:B7:CA"]
   }
 }]

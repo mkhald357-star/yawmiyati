@@ -1,8 +1,8 @@
 {
   "packageId": "io.github.mkhald357_star.yawmiyati",
   "host": "mkhald357-star.github.io",
-  "name": "يومياتي",
-  "launcherName": "يومياتي",
+  "name": "مدبر المهام",
+  "launcherName": "مدبر المهام",
   "display": "standalone",
   "themeColor": "#EFF0EC",
   "themeColorDark": "#141613",
