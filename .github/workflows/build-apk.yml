@@ -1,10 +1,13 @@
-name: بناء تطبيق أندرويد
+name: بناء تطبيق أندرويد (Native APK & AAB)
 
 on:
   workflow_dispatch:          # زر تشغيل يدوي من تبويب Actions
   push:
     paths:
-      - 'twa-manifest.json'
+      - 'android/**'
+      - 'index.html'
+      - 'manifest.json'
+      - 'sw.js'
       - '.github/workflows/build-apk.yml'
 
 permissions:
@@ -26,13 +29,10 @@ jobs:
       - name: تهيئة Android SDK
         uses: android-actions/setup-android@v3
 
-      - name: تهيئة Node
-        uses: actions/setup-node@v4
-        with:
-          node-version: '20'
-
-      - name: تثبيت Bubblewrap
-        run: npm install -g @bubblewrap/cli
+      - name: مزامنة أصول الويب داخل مجلد الأندرويد
+        run: |
+          mkdir -p android/app/src/main/assets/www
+          cp -r index.html manifest.json sw.js icon-*.png android/app/src/main/assets/www/ || true
 
       - name: تجهيز مفتاح التوقيع
         env:
@@ -41,62 +41,42 @@ jobs:
         run: |
           set -e
           PASS="${STORE_PASS:-yawmiyati2026}"
-          echo "PASS=$PASS" >> "$GITHUB_ENV"
+          echo "KEYSTORE_PASSWORD=$PASS" >> "$GITHUB_ENV"
+          cd android
           if [ -n "$KEYSTORE_B64" ]; then
-            echo "أستخدم مفتاحك المحفوظ في الأسرار"
+            echo "استخدام مفتاح التوقيع من Secrets"
             echo "$KEYSTORE_B64" | base64 -d > android.keystore
-            echo "NEW_KEY=no" >> "$GITHUB_ENV"
+          elif [ -f "android.keystore" ]; then
+            echo "استخدام مفتاح التوقيع الموجود بالمشروع"
           else
-            echo "لا يوجد مفتاح محفوظ — أُنشئ واحداً جديداً"
+            echo "إنشاء مفتاح توقيع جديد"
             keytool -genkeypair -v \
               -keystore android.keystore -alias yawmiyati \
               -keyalg RSA -keysize 2048 -validity 10000 \
               -storepass "$PASS" -keypass "$PASS" \
               -dname "CN=Yawmiyati, OU=Personal, O=Yawmiyati, L=Mosul, C=IQ"
-            base64 -w0 android.keystore > keystore-base64.txt
-            echo "NEW_KEY=yes" >> "$GITHUB_ENV"
           fi
+          base64 -w0 android.keystore > keystore-base64.txt || true
 
-      - name: ربط Bubblewrap بأدوات النظام
-        run: |
-          bubblewrap updateConfig --jdkPath "$JAVA_HOME" --androidSdkPath "$ANDROID_SDK_ROOT"
-
-      - name: توليد مشروع أندرويد من twa-manifest.json
+      - name: بناء تطبيق الأندرويد (APK & AAB)
         env:
-          BUBBLEWRAP_KEYSTORE_PASSWORD: ${{ env.PASS }}
-          BUBBLEWRAP_KEY_PASSWORD: ${{ env.PASS }}
+          KEYSTORE_PASSWORD: ${{ env.KEYSTORE_PASSWORD }}
         run: |
-          set -e
-          yes | bubblewrap update --skipVersionUpgrade || bubblewrap update
+          cd android
+          chmod +x gradlew
+          ./gradlew assembleRelease bundleRelease --stacktrace
 
-      - name: البناء
-        env:
-          BUBBLEWRAP_KEYSTORE_PASSWORD: ${{ env.PASS }}
-          BUBBLEWRAP_KEY_PASSWORD: ${{ env.PASS }}
+      - name: تجهيز ملفات المخرجات
         run: |
-          set -e
-          bubblewrap build --skipPwaValidation
-          ls -la *.apk *.aab || true
+          mkdir -p output
+          find android/app/build/outputs/ -name "*.apk" -exec cp {} output/ \;
+          find android/app/build/outputs/ -name "*.aab" -exec cp {} output/ \;
+          cp android/keystore-base64.txt output/ 2>/dev/null || true
+          ls -la output/
 
-      - name: استخراج بصمة التوقيع لملف assetlinks
-        run: |
-          keytool -list -v -keystore android.keystore -alias yawmiyati \
-            -storepass "$PASS" | grep -A1 "SHA256:" | head -2 > fingerprint.txt || true
-          cat fingerprint.txt || true
-
-      - name: رفع المخرجات
+      - name: رفع حزمة التطبيق (APK & AAB)
         uses: actions/upload-artifact@v4
         with:
-          name: yawmiyati-android
-          path: |
-            *.apk
-            *.aab
-            assetlinks.json
-            fingerprint.txt
-            keystore-base64.txt
-          if-no-files-found: warn
-
-      - name: تنبيه بحفظ المفتاح
-        if: env.NEW_KEY == 'yes'
-        run: |
-          echo "::warning::أُنشئ مفتاح توقيع جديد. نزّل keystore-base64.txt من المخرجات وضع محتواه في Secrets باسم KEYSTORE_B64، وإلا لن تستطيع تحديث التطبيق لاحقاً بنفس التوقيع."
+          name: yawmiyati-android-release
+          path: output/*
+          if-no-files-found: error

@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="appName">مدبر المهام</string>
+    <string name="launcherName">مدبر المهام</string>
+
+    <string name="shortcut_name_0">إضافة حركة</string>
+    <string name="shortcut_short_name_0">حركة</string>
+
+    <string name="shortcut_name_1">المهام</string>
+    <string name="shortcut_short_name_1">مهام</string>
+
+    <string name="shortcut_name_2">المنبّه</string>
+    <string name="shortcut_short_name_2">منبّه</string>
+</resources>

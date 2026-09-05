@@ -1,0 +1,18 @@
+# مفاتيح التوقيع — لا تُرفع إطلاقاً
+android/android.keystore
+android/keystore-base64.txt
+android/keystore.properties
+*.jks
+*.keystore
+
+# مخرجات البناء
+android/.gradle/
+android/**/build/
+android/local.properties
+*.apk
+*.aab
+*.idsig
+
+# نظام التشغيل / المحررات
+.DS_Store
+Thumbs.db

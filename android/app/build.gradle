@@ -1,0 +1,69 @@
+plugins {
+    id 'com.android.application'
+}
+
+android {
+    namespace 'io.github.mkhald357_star.yawmiyati'
+    compileSdk 35
+
+    defaultConfig {
+        applicationId "io.github.mkhald357_star.yawmiyati"
+        minSdk 23
+        targetSdk 35
+        versionCode 4
+        versionName "1.0.1"
+
+        resValue "string", "appName", "مدبر المهام"
+        resValue "string", "launcherName", "مدبر المهام"
+    }
+
+    signingConfigs {
+        release {
+            def ksFile = file('../android.keystore')
+            if (ksFile.exists()) {
+                def propsFile = file('../keystore.properties')
+                def pass = System.getenv("KEYSTORE_PASSWORD")
+                if ((pass == null || pass.isEmpty()) && propsFile.exists()) {
+                    def props = new Properties()
+                    propsFile.withInputStream { props.load(it) }
+                    pass = props.getProperty('KEYSTORE_PASSWORD')
+                }
+                if (pass == null || pass.isEmpty()) {
+                    throw new GradleException(
+                        "KEYSTORE_PASSWORD غير مضبوطة. عيّنها كمتغيّر بيئي، أو أنشئ android/keystore.properties " +
+                        "(انسخه من keystore.properties.example) قبل بناء نسخة release."
+                    )
+                }
+                storeFile ksFile
+                storePassword pass
+                keyAlias "yawmiyati"
+                keyPassword pass
+            }
+        }
+    }
+
+    buildTypes {
+        release {
+            signingConfig signingConfigs.release
+            minifyEnabled false
+            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+        }
+        debug {
+            signingConfig signingConfigs.release
+        }
+    }
+
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_1_8
+        targetCompatibility JavaVersion.VERSION_1_8
+    }
+}
+
+dependencies {
+    implementation fileTree(include: ['*.jar'], dir: 'libs')
+    implementation 'androidx.appcompat:appcompat:1.7.0'
+    implementation 'androidx.webkit:webkit:1.12.1'
+    implementation 'androidx.core:core:1.15.0'
+    implementation 'com.google.android.material:material:1.12.0'
+    implementation 'androidx.activity:activity:1.9.3'
+}

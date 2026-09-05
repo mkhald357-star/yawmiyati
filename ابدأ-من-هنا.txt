@@ -7,7 +7,7 @@
 --------------
 1) أنشئ مستودعاً جديداً على GitHub باسم:  yawmiyati
 2) ارفع محتويات هذا المجلّد كلها في جذر المستودع
-   (مع المجلّدين المخفيّين .github و .well-known)
+   (مع المجلّد المخفي .github)
 3) Settings ← Pages ← Branch: main / root ← Save
 
 بعد دقيقة يعمل التطبيق على:
@@ -18,12 +18,9 @@
 
 تريد ملف APK؟
 -------------
-تبويب Actions ← «بناء تطبيق أندرويد» ← Run workflow
-انتظر ٥ دقائق، ثم نزّل الـAPK من قسم Artifacts.
-
-مهم: بعد أول بناء احفظ ملف keystore-base64.txt في
-Secrets باسم KEYSTORE_B64 وإلا لن تستطيع التحديث لاحقاً.
-التفاصيل في AUTOBUILD.md
+تبويب Actions ← «بناء تطبيق أندرويد (Native APK & AAB)» ← Run workflow
+انتظر ٥-٨ دقائق، ثم نزّل الـAPK/AAB من قسم Artifacts.
+التفاصيل الكاملة في ANDROID.md.
 
 
 الملفات
@@ -32,18 +29,8 @@ index.html            التطبيق كاملاً
 sw.js                 العمل بلا إنترنت والإشعارات المجدولة
 manifest.json         اسم التطبيق وأيقوناته
 icon-*.png            الأيقونات
-twa-manifest.json     إعداد بناء الأندرويد
+android/              مشروع أندرويد الأصيل (Native، لا TWA)
 .github/workflows/    وصفة البناء التلقائي
-.well-known/          ربط التطبيق بنطاقك (يحتاج بصمة التوقيع لاحقاً)
 
 README.md             الشرح الكامل والنشر
-ANDROID.md            طرق الحصول على APK
-AUTOBUILD.md          البناء التلقائي خطوة بخطوة
-
-
-ملاحظة عن .well-known
----------------------
-هذا المجلّد لا يعمل من داخل مستودع المشروع. حين تصل لخطوة
-إزالة شريط المتصفّح، انقله إلى مستودع باسم mkhald357.github.io
-ليصير رابطه:
-   https://mkhald357.github.io/.well-known/assetlinks.json
+ANDROID.md            طريقة بناء تطبيق الأندرويد الأصيل
